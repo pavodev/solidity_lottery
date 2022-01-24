@@ -3,13 +3,13 @@ pragma solidity ^0.8.11;
 
 contract Lottery {
     address public manager;
-    address[] public players;
+    address payable[] public players;
 
     constructor() {
         manager = msg.sender;
     }
 
-    function getPlayers() public view returns (address[] memory){
+    function getPlayers() public view returns (address payable[] memory){
         return players;
     }
 
@@ -18,7 +18,7 @@ contract Lottery {
         // We can pass a boolean to it, if false, the execution of the function stops.
         // msg.value is in wei, 'ether' converts the value to wei
         require(msg.value > .01 ether);
-        players.push(msg.sender);
+        players.push(payable(msg.sender));
     }
 
     // As there is no random number generator in Solidity, develop a pseudo-random method
@@ -29,7 +29,7 @@ contract Lottery {
     function pickWinner() public restricted {
         uint index = random() % players.length;
         payable(players[index]).transfer(address(this).balance);
-        players = new address[](0); // New empty dynamic array
+        players = new address payable[](0); // New empty dynamic array
     }
 
     // In order to avoid code duplication
